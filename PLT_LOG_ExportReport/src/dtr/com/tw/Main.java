@@ -112,9 +112,9 @@ public class Main {
 		System.out.println("Step1.config.properties 抓取_參數");
 
 		frmDtrPltLog = new JFrame();
-		frmDtrPltLog.setTitle("DTR PLT Log to Excel Beta v0.01.0 by Digital Signage");
+		frmDtrPltLog.setTitle("DTR PLT Log to Excel Beta v0.13.0 by Digital Signage");
 		frmDtrPltLog.setFont(new Font("Dialog", Font.BOLD, 16));
-		frmDtrPltLog.setBounds(100, 100, 1300, 700);
+		frmDtrPltLog.setBounds(100, 100, 1000, 800);
 		frmDtrPltLog.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frmDtrPltLog.getContentPane().setLayout(null);
 
@@ -143,7 +143,7 @@ public class Main {
 		txtpnna_0 = new JTextPane();
 		txtpnna_0.setFont(new Font("新宋体", Font.PLAIN, 16));
 		txtpnna_0.setText("說明 : Log to Excel = 輸出Excel/Log to Table = 顯示在Table上 \n有任何問題 管理員 請打分機:321 ");
-		txtpnna_0.setBounds(10, 207, 1266, 108);
+		txtpnna_0.setBounds(10, 207, 966, 137);
 		frmDtrPltLog.getContentPane().add(txtpnna_0);
 
 		JButton btnNewButton_0 = new JButton("Search_Log_to_Excel");
@@ -159,19 +159,27 @@ public class Main {
 							String mk_model = textField_1.getText().trim();// 型號 名稱
 							String mk_sn = textField_2.getText().trim();// SN產品 序號
 							String[] search = { mk_id, mk_model, mk_sn };
+							
 							String txt_show = "說明 : Log to Excel = 輸出Excel/Log to Table = 顯示在Table上 ";
 							txt_show += "\n有任何問題 管理員 請打分機:321 ";
 							txt_show += " \n製令單_ : " + mk_id + " _機種型號_ : " + mk_model + " _SN產品序號_ : " + mk_sn;
 							txtpnna_0.setText(txt_show);
 							System.out.println(
 									"Step2.製令單_ : " + mk_id + " _機種型號_ : " + mk_model + " _SN產品序號_ : " + mk_sn);
-
+							
+							txt_show += " \nFTP Connect...";
+							txtpnna_0.setText(txt_show);
+							
 							// Step3. 執行項目 LOG to JSONArray
 							year = Year.now().getValue();
 							JSONArray list = FtpService.downFile(ftpHost, ftpPort, ftpUserName, ftpPassword,
 									ftpPath + year + '/', search, localPath);
+							
 							// Step4. 執行項目 JSONArray to Excel
 							XSSFWorkbook workbook = ExcelService.createExcelAll(list);
+							
+							txt_show += " \nLOG to Excel...";
+							txtpnna_0.setText(txt_show);
 							// Step4. 執行項目 Excel to File
 							ExportFileService.createExcelFile(workbook, "PLT_Excel");
 
@@ -183,7 +191,7 @@ public class Main {
 				}
 			}
 		});
-		btnNewButton_0.setBounds(1080, 117, 184, 35);
+		btnNewButton_0.setBounds(792, 117, 171, 35);
 		frmDtrPltLog.getContentPane().add(btnNewButton_0);
 
 		JLabel lblNewLabel_2 = new JLabel("SN(產品/出貨)序號");
@@ -200,19 +208,19 @@ public class Main {
 		textField_3 = new JTextField();
 		textField_3.setFont(new Font("新細明體", Font.PLAIN, 16));
 		textField_3.setColumns(10);
-		textField_3.setBounds(118, 13, 174, 35);
+		textField_3.setBounds(118, 13, 114, 35);
 		frmDtrPltLog.getContentPane().add(textField_3);
 
 		textField_4 = new JTextField();
 		textField_4.setFont(new Font("新細明體", Font.PLAIN, 16));
 		textField_4.setColumns(10);
-		textField_4.setBounds(350, 13, 52, 35);
+		textField_4.setBounds(290, 13, 52, 35);
 		frmDtrPltLog.getContentPane().add(textField_4);
 
 		textField_5 = new JTextField();
 		textField_5.setFont(new Font("新細明體", Font.PLAIN, 16));
 		textField_5.setColumns(10);
-		textField_5.setBounds(474, 13, 184, 35);
+		textField_5.setBounds(403, 13, 184, 35);
 		frmDtrPltLog.getContentPane().add(textField_5);
 
 		JLabel lblNewLabel_3 = new JLabel("FTP設定_IP:");
@@ -222,16 +230,16 @@ public class Main {
 
 		JLabel lblNewLabel_4 = new JLabel("Port:");
 		lblNewLabel_4.setFont(new Font("新細明體", Font.PLAIN, 16));
-		lblNewLabel_4.setBounds(302, 13, 38, 35);
+		lblNewLabel_4.setBounds(242, 13, 38, 35);
 		frmDtrPltLog.getContentPane().add(lblNewLabel_4);
 
 		lblNewLabel_5 = new JLabel(" Path:");
 		lblNewLabel_5.setFont(new Font("新細明體", Font.PLAIN, 16));
-		lblNewLabel_5.setBounds(412, 13, 52, 35);
+		lblNewLabel_5.setBounds(352, 13, 52, 35);
 		frmDtrPltLog.getContentPane().add(lblNewLabel_5);
 
 		JSeparator separator = new JSeparator();
-		separator.setBounds(0, 58, 1286, 4);
+		separator.setBounds(0, 58, 986, 4);
 		frmDtrPltLog.getContentPane().add(separator);
 
 		JButton btnNewButton_1 = new JButton("Search_Log_to_Table");
@@ -253,13 +261,21 @@ public class Main {
 
 							System.out.println(
 									"Step2.製令單_ : " + mk_id + " _機種型號_ : " + mk_model + " _SN產品序號_ : " + mk_sn);
+							
+							txt_show += " \nFTP Connect...";
+							txtpnna_0.setText(txt_show);
+							
 							// Step3. 執行項目 LOG to JSONArray
 							year = Year.now().getValue();
 							JSONArray list = FtpService.downFile(ftpHost, ftpPort, ftpUserName, ftpPassword,
 									ftpPath + year + '/', search, localPath);
-							System.out.println("Step3.查詢清單_ : " + list.toString());
+							//System.out.println("Step3.查詢清單_ : " + list.toString());
+							
 							// Step4. 執行項目 JSONArray to Object[][]
 							Object[][] data = TableService.createTable(list);
+							
+							txt_show += " \nFTP Show to Table...";
+							txtpnna_0.setText(txt_show);
 							// Step5. 取代顯示Table
 							table = new JTable(data, columns);
 							table.setRowHeight(30);
@@ -289,12 +305,12 @@ public class Main {
 				}
 			}
 		});
-		btnNewButton_1.setBounds(1080, 72, 184, 35);
+		btnNewButton_1.setBounds(792, 72, 171, 35);
 		frmDtrPltLog.getContentPane().add(btnNewButton_1);
 
 		scrollPane_0 = new JScrollPane();
 		scrollPane_0.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
-		scrollPane_0.setBounds(10, 339, 1266, 314);
+		scrollPane_0.setBounds(10, 368, 966, 385);
 		frmDtrPltLog.getContentPane().add(scrollPane_0);
 
 		table = new JTable(data, columns);
@@ -309,27 +325,27 @@ public class Main {
 
 		lblNewLabel = new JLabel("Account:");
 		lblNewLabel.setFont(new Font("新細明體", Font.PLAIN, 16));
-		lblNewLabel.setBounds(668, 13, 69, 35);
+		lblNewLabel.setBounds(597, 13, 69, 35);
 		frmDtrPltLog.getContentPane().add(lblNewLabel);
 
 		lblPassword = new JLabel("Password:");
 		lblPassword.setFont(new Font("新細明體", Font.PLAIN, 16));
-		lblPassword.setBounds(863, 13, 69, 35);
+		lblPassword.setBounds(792, 13, 69, 35);
 		frmDtrPltLog.getContentPane().add(lblPassword);
 
 		textField = new JTextField();
 		textField.setFont(new Font("新細明體", Font.PLAIN, 16));
 		textField.setColumns(10);
-		textField.setBounds(747, 13, 106, 35);
+		textField.setBounds(676, 13, 106, 35);
 		frmDtrPltLog.getContentPane().add(textField);
 
 		passwordField = new JPasswordField();
-		passwordField.setBounds(942, 13, 105, 35);
+		passwordField.setBounds(871, 13, 105, 35);
 		frmDtrPltLog.getContentPane().add(passwordField);
 
 		JSeparator separator_1 = new JSeparator();
 		separator_1.setForeground(new Color(160, 160, 160));
-		separator_1.setBounds(0, 325, 1286, 4);
+		separator_1.setBounds(0, 354, 986, 4);
 		frmDtrPltLog.getContentPane().add(separator_1);
 
 	}

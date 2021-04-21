@@ -4,7 +4,6 @@ import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.StringReader;
-import java.util.Arrays;
 import java.util.Date;
 
 import org.apache.commons.net.ftp.FTPClient;
@@ -12,6 +11,8 @@ import org.apache.commons.net.ftp.FTPFile;
 import org.apache.commons.net.ftp.FTPReply;
 import org.json.JSONArray;
 import org.json.JSONObject;
+
+import dtr.com.tw.Main;
 
 public class FtpService {
 	private static FTPClient ftpClient = new FTPClient();
@@ -60,7 +61,6 @@ public class FtpService {
 			ByteArrayOutputStream is = new ByteArrayOutputStream();
 			String line = "";
 
-			int nb = 1;
 			for (FTPFile ff : fs) {
 				String[] f_n = ff.getName().split("_");
 				// 比對_查詢條件
@@ -75,23 +75,23 @@ public class FtpService {
 					ftpClient.retrieveFile(ff.getName(), is);
 					BufferedReader bufferedReader = new BufferedReader(new StringReader(is.toString("UTF-8")));
 
-					// 第一行抓取+檢驗 開頭是否為正確
-					char[] json_f = bufferedReader.readLine().toCharArray();
-					if (json_f[0] != '{') {
-						json_f = Arrays.copyOfRange(json_f, 1, json_f.length);
+					// 第一行抓取+檢驗 (檔頭BOM)去除 是否為正確
+					line = bufferedReader.readLine();
+					if (line.charAt(0) != '{') {
+						line = line.substring(1);
 					}
 
-					// 轉成字串
-					line = new String(json_f);
-					System.out.println(line);
-					System.out.println(new Date() + " | " + ff.getName() + " " + nb++);
+					// 字串 轉 JSON
+					// System.out.println(line);
+					// System.out.println(new Date() + " | " + ff.getName() + " " + nb++);
 					one = new JSONObject(line);
 
 					// 補型號/補主機板號/轉16進制
 					one.put("WorkModel", f_n[1]);
 					String mbSn[] = (one.getString("UUID").split("-"));
 					one.put("MB SN", mbSn[mbSn.length - 1]);
-
+					long file_size=ff.getSize();
+					one.put("FileSize", file_size);
 					list.put(one);
 
 					// 關閉串流
@@ -102,6 +102,7 @@ public class FtpService {
 			ftpClient.logout();
 		} catch (Exception e) {
 			e.printStackTrace();
+			Main.FLAG_Thead = true;
 			return list;
 		} finally {
 			if (ftpClient.isConnected()) {
@@ -110,7 +111,6 @@ public class FtpService {
 				} catch (IOException ioe) {
 				}
 			}
-
 		}
 		System.out.println(new Date());
 		return list;

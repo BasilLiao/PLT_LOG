@@ -50,6 +50,7 @@ public class ExcelService {
 		row.createCell(colNum++).setCellValue("LAN1 MAC");
 		row.createCell(colNum++).setCellValue("LAN2 MAC");
 		row.createCell(colNum++).setCellValue("WIFI MAC");
+		row.createCell(colNum++).setCellValue("SIZE(Byte)");
 
 		// 樣式添加+設置寬度
 		for (int i = 0; i < colNum; i++) {
@@ -80,8 +81,8 @@ public class ExcelService {
 			row.createCell(colNum++).setCellValue(one.getString("LAN1 MAC"));
 			row.createCell(colNum++).setCellValue(one.getString("LAN2 MAC"));
 			row.createCell(colNum++).setCellValue(one.getString("WIFI MAC"));
+			row.createCell(colNum++).setCellValue(one.getLong("FileSize"));
 		}
-
 		return workbook;
 	}
 }

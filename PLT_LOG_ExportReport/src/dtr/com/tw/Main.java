@@ -24,6 +24,7 @@ import javax.swing.ScrollPaneConstants;
 
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.json.JSONArray;
+import org.json.JSONObject;
 
 import dtr.com.tw.Service.ExcelService;
 import dtr.com.tw.Service.ExportFileService;
@@ -84,8 +85,7 @@ public class Main {
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
-		String[] columns = { "工單號", "型號", "SN(產品)", "BIOS", "IMEI", "EC", "ECN", "M/B序號", "LAN1 MAC", "LAN2 MAC",
-				"WIFI MAC", "SIZE(Byte)" };
+		String[] columns = { "工單號", "型號", "SN(產品)", "SIZE(Byte)", "BIOS", "IMEI", "EC", "ECN", "M/B序號", "LAN1 MAC", "LAN2 MAC", "WIFI MAC" };
 		Object[][] data = new Object[1][12];
 		// step0.抓取properties 內容
 		String propFileName = "config.properties";
@@ -112,7 +112,7 @@ public class Main {
 		System.out.println("Step1.config.properties 抓取_參數");
 
 		frmDtrPltLog = new JFrame();
-		frmDtrPltLog.setTitle("DTR PLT Log to Excel Beta v0.16.0 by Digital Signage");
+		frmDtrPltLog.setTitle("DTR PLT Log to Excel Beta v0.17.8 by Digital Signage");
 		frmDtrPltLog.setFont(new Font("Dialog", Font.BOLD, 16));
 		frmDtrPltLog.setBounds(100, 100, 1200, 700);
 		frmDtrPltLog.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -126,25 +126,25 @@ public class Main {
 
 		textField_1 = new JTextField();
 		textField_1.setFont(new Font("新細明體", Font.PLAIN, 16));
-		textField_1.setBounds(198, 117, 206, 35);
+		textField_1.setBounds(545, 72, 206, 35);
 		frmDtrPltLog.getContentPane().add(textField_1);
 		textField_1.setColumns(11);
 
 		JLabel lblNewLabel_0 = new JLabel("製令單號");
 		lblNewLabel_0.setFont(new Font("新細明體", Font.PLAIN, 16));
-		lblNewLabel_0.setBounds(10, 72, 178, 35);
+		lblNewLabel_0.setBounds(10, 72, 159, 35);
 		frmDtrPltLog.getContentPane().add(lblNewLabel_0);
 
 		JLabel lblNewLabel_1 = new JLabel("機種型號");
 		lblNewLabel_1.setFont(new Font("新細明體", Font.PLAIN, 16));
-		lblNewLabel_1.setBounds(10, 117, 178, 35);
+		lblNewLabel_1.setBounds(414, 72, 98, 35);
 		frmDtrPltLog.getContentPane().add(lblNewLabel_1);
 
 		txtpnna_0 = new JTextPane();
 		txtpnna_0.setEditable(false);
 		txtpnna_0.setFont(new Font("新宋体", Font.PLAIN, 16));
 		txtpnna_0.setText("說明 : Log to Excel = 輸出Excel/Log to Table = 顯示在Table上 \n有任何問題 管理員 請打分機:321 ");
-		txtpnna_0.setBounds(10, 207, 1166, 137);
+		txtpnna_0.setBounds(10, 162, 1166, 182);
 		frmDtrPltLog.getContentPane().add(txtpnna_0);
 
 		JButton btnNewButton_0 = new JButton("Search_Log_to_Excel");
@@ -165,8 +165,7 @@ public class Main {
 							txt_show += "\n有任何問題 管理員 請打分機:321 ";
 							txt_show += " \n製令單_ : " + mk_id + " _機種型號_ : " + mk_model + " _SN產品序號_ : " + mk_sn;
 							txtpnna_0.setText(txt_show);
-							System.out.println(
-									"Step2.製令單_ : " + mk_id + " _機種型號_ : " + mk_model + " _SN產品序號_ : " + mk_sn);
+							System.out.println("Step2.製令單_ : " + mk_id + " _機種型號_ : " + mk_model + " _SN產品序號_ : " + mk_sn);
 
 							txt_show += " \nFTP Connect...";
 							txtpnna_0.setText(txt_show);
@@ -175,8 +174,7 @@ public class Main {
 							txt_show += " \nFTP Search LogFile to Excel...";
 							txtpnna_0.setText(txt_show);
 							year = Year.now().getValue();
-							JSONArray list = FtpService.downFile(ftpHost, ftpPort, ftpUserName, ftpPassword,
-									ftpPath + year + '/', search, localPath);
+							JSONArray list = FtpService.downFile(ftpHost, ftpPort, ftpUserName, ftpPassword, ftpPath + year + '/', search, localPath);
 
 							// Step4. 執行項目 JSONArray to Excel
 							XSSFWorkbook workbook = ExcelService.createExcelAll(list);
@@ -186,7 +184,8 @@ public class Main {
 							// Step4. 執行項目 Excel to File
 							ExportFileService.createExcelFile(workbook, "PLT_Excel");
 
-							txt_show += " \ndone...Number:" + list.length();
+							txt_show += " \ndone...Number:" + list.length() + " / Failed:" + FtpService.list_failed.length();
+							;
 							txtpnna_0.setText(txt_show);
 							FLAG_Thead = true;
 
@@ -200,13 +199,13 @@ public class Main {
 
 		JLabel lblNewLabel_2 = new JLabel("SN(產品/出貨)序號");
 		lblNewLabel_2.setFont(new Font("新細明體", Font.PLAIN, 16));
-		lblNewLabel_2.setBounds(10, 162, 178, 35);
+		lblNewLabel_2.setBounds(10, 117, 159, 35);
 		frmDtrPltLog.getContentPane().add(lblNewLabel_2);
 
 		textField_2 = new JTextField();
 		textField_2.setFont(new Font("新細明體", Font.PLAIN, 16));
 		textField_2.setColumns(11);
-		textField_2.setBounds(198, 162, 206, 35);
+		textField_2.setBounds(198, 117, 206, 35);
 		frmDtrPltLog.getContentPane().add(textField_2);
 
 		textField_3 = new JTextField();
@@ -264,8 +263,7 @@ public class Main {
 							txt_show += "\n製令單_ : " + mk_id + " _機種型號_ : " + mk_model + " _SN產品序號_ : " + mk_sn;
 							txtpnna_0.setText(txt_show);
 
-							System.out.println(
-									"Step2.製令單_ : " + mk_id + " _機種型號_ : " + mk_model + " _SN產品序號_ : " + mk_sn);
+							System.out.println("Step2.製令單_ : " + mk_id + " _機種型號_ : " + mk_model + " _SN產品序號_ : " + mk_sn);
 
 							txt_show += " \nFTP Connect...";
 							txtpnna_0.setText(txt_show);
@@ -274,8 +272,7 @@ public class Main {
 							txt_show += " \nFTP Search LogFile to Table...";
 							txtpnna_0.setText(txt_show);
 							year = Year.now().getValue();
-							JSONArray list = FtpService.downFile(ftpHost, ftpPort, ftpUserName, ftpPassword,
-									ftpPath + year + '/', search, localPath);
+							JSONArray list = FtpService.downFile(ftpHost, ftpPort, ftpUserName, ftpPassword, ftpPath + year + '/', search, localPath);
 							// System.out.println("Step3.查詢清單_ : " + list.toString());
 
 							txt_show += " \nFTP Create Table...";
@@ -285,7 +282,7 @@ public class Main {
 
 							// Step5. 取代顯示Table
 							table = new JTable(data, columns);
-							
+
 							table.setRowHeight(30);
 							table.setFont(new Font("新宋体", Font.BOLD, 16));
 							table.getTableHeader().setFont(new Font("新宋体", Font.BOLD, 16));
@@ -306,7 +303,16 @@ public class Main {
 							scrollPane_0.setViewportView(table);
 							txt_show += " \nFTP Show to Table...";
 							txtpnna_0.setText(txt_show);
-							txt_show += " \ndone...Number:" + list.length();
+							txt_show += " \ndone...Number:" + list.length() + " / Failed:" + FtpService.list_failed.length();
+							//錯誤顯示SN
+							for (Object string : FtpService.list_failed) {
+								try {
+									JSONObject one = new JSONObject(string.toString());
+									txt_show += "[" + one.getString("SN") + "]";
+								} catch (Exception e2) {
+									e2.printStackTrace();
+								}
+							}
 							txtpnna_0.setText(txt_show);
 							FLAG_Thead = true;
 

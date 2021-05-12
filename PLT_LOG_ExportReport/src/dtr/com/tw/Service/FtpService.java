@@ -16,6 +16,7 @@ import dtr.com.tw.Main;
 
 public class FtpService {
 	private static FTPClient ftpClient = new FTPClient();
+	public static JSONArray list_failed = new JSONArray();
 
 	/**
 	 * Description: 從FTP伺服器下載檔案
@@ -31,10 +32,11 @@ public class FtpService {
 	 * @param localPath  下載後儲存到本地的路徑
 	 * @return
 	 */
-	public static JSONArray downFile(String url, int port, String username, String password, String remotePath,
-			String[] searchName, String localPath) {
+	public static JSONArray downFile(String url, int port, String username, String password, String remotePath, String[] searchName,
+			String localPath) {
 		System.out.println(new Date());
 		JSONArray list = new JSONArray();
+		list_failed = new JSONArray();
 		try {
 			// 登入 如果採用預設埠，可以使用ftp.connect(url)的方式直接連線FTP伺服器
 			ftpClient.connect(url, port);
@@ -77,20 +79,33 @@ public class FtpService {
 
 					// 第一行抓取+檢驗 (檔頭BOM)去除 是否為正確
 					line = bufferedReader.readLine();
-					if (line.charAt(0) != '{') {
+					if (line != null && line.charAt(0) != '{') {
 						line = line.substring(1);
 					}
 
 					// 字串 轉 JSON
 					// System.out.println(line);
 					// System.out.println(new Date() + " | " + ff.getName() + " " + nb++);
+					// 如果異常為空
+					try {
+						new JSONObject(line);
+					} catch (Exception ex) {
+						one = new JSONObject();
+						long file_size = ff.getSize();
+						one.put("FileSize", file_size);
+						one.put("WorkOrder", f_n[0]);
+						one.put("WorkModel", f_n[1]);
+						one.put("SN", f_n[2]);
+						list.put(one);
+						list_failed.put(one);
+						continue;
+					}
 					one = new JSONObject(line);
-
 					// 補型號/補主機板號/轉16進制
 					one.put("WorkModel", f_n[1]);
 					String mbSn[] = (one.getString("UUID").split("-"));
 					one.put("MB SN", mbSn[mbSn.length - 1]);
-					long file_size=ff.getSize();
+					long file_size = ff.getSize();
 					one.put("FileSize", file_size);
 					list.put(one);
 

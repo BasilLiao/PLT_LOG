@@ -42,6 +42,7 @@ public class ExcelService {
 		row.createCell(colNum++).setCellValue("製令工單號");
 		row.createCell(colNum++).setCellValue("產品型號");
 		row.createCell(colNum++).setCellValue("SN(出貨/產品)序號");
+		row.createCell(colNum++).setCellValue("SIZE(Byte)");
 		row.createCell(colNum++).setCellValue("BIOS");
 		row.createCell(colNum++).setCellValue("IMEI");
 		row.createCell(colNum++).setCellValue("EC");
@@ -50,7 +51,6 @@ public class ExcelService {
 		row.createCell(colNum++).setCellValue("LAN1 MAC");
 		row.createCell(colNum++).setCellValue("LAN2 MAC");
 		row.createCell(colNum++).setCellValue("WIFI MAC");
-		row.createCell(colNum++).setCellValue("SIZE(Byte)");
 
 		// 樣式添加+設置寬度
 		for (int i = 0; i < colNum; i++) {

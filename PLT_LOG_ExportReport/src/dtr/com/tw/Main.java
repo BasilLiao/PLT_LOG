@@ -90,6 +90,7 @@ public class Main {
 		// step0.抓取properties 內容
 		String propFileName = "config.properties";
 		Properties prop = new Properties();
+
 		InputStream inputStream = getClass().getClassLoader().getResourceAsStream(propFileName);
 		try {
 			if (inputStream != null) {
@@ -112,7 +113,7 @@ public class Main {
 		System.out.println("Step1.config.properties 抓取_參數");
 
 		frmDtrPltLog = new JFrame();
-		frmDtrPltLog.setTitle("DTR PLT Log to Excel Beta v0.17.8 by Digital Signage");
+		frmDtrPltLog.setTitle("DTR PLT Log to Excel Beta v0.18.7 by Digital Signage");
 		frmDtrPltLog.setFont(new Font("Dialog", Font.BOLD, 16));
 		frmDtrPltLog.setBounds(100, 100, 1200, 700);
 		frmDtrPltLog.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -207,6 +208,12 @@ public class Main {
 		textField_2.setColumns(11);
 		textField_2.setBounds(198, 117, 206, 35);
 		frmDtrPltLog.getContentPane().add(textField_2);
+		textField_2.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				search_Log_Table();
+			}
+		});
 
 		textField_3 = new JTextField();
 		textField_3.setFont(new Font("新細明體", Font.PLAIN, 16));
@@ -248,79 +255,10 @@ public class Main {
 		JButton btnNewButton_1 = new JButton("Search_Log_to_Table");
 		btnNewButton_1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				if (FLAG_Thead) {
-					FLAG_Thead = false;
-					new Thread() {
-						public void run() {
-
-							// Step2. 查詢項目
-							String mk_id = textField_0.getText().trim();// 製令單 ID
-							String mk_model = textField_1.getText().trim();// 型號 名稱
-							String mk_sn = textField_2.getText().trim();// SN產品 序號
-							String[] search = { mk_id, mk_model, mk_sn };
-							String txt_show = "說明 : Log to Excel = 輸出Excel/Log to Table = 顯示在Table上 ";
-							txt_show += "\n有任何問題 管理員 請打分機:321 ";
-							txt_show += "\n製令單_ : " + mk_id + " _機種型號_ : " + mk_model + " _SN產品序號_ : " + mk_sn;
-							txtpnna_0.setText(txt_show);
-
-							System.out.println("Step2.製令單_ : " + mk_id + " _機種型號_ : " + mk_model + " _SN產品序號_ : " + mk_sn);
-
-							txt_show += " \nFTP Connect...";
-							txtpnna_0.setText(txt_show);
-
-							// Step3. 執行項目 LOG to JSONArray
-							txt_show += " \nFTP Search LogFile to Table...";
-							txtpnna_0.setText(txt_show);
-							year = Year.now().getValue();
-							JSONArray list = FtpService.downFile(ftpHost, ftpPort, ftpUserName, ftpPassword, ftpPath + year + '/', search, localPath);
-							// System.out.println("Step3.查詢清單_ : " + list.toString());
-
-							txt_show += " \nFTP Create Table...";
-							txtpnna_0.setText(txt_show);
-							// Step4. 執行項目 JSONArray to Object[][]
-							Object[][] data = TableService.createTable(list);
-
-							// Step5. 取代顯示Table
-							table = new JTable(data, columns);
-
-							table.setRowHeight(30);
-							table.setFont(new Font("新宋体", Font.BOLD, 16));
-							table.getTableHeader().setFont(new Font("新宋体", Font.BOLD, 16));
-							table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-							table.getColumnModel().getColumn(0).setMinWidth(140);
-							table.getColumnModel().getColumn(1).setMinWidth(80);
-							table.getColumnModel().getColumn(2).setMinWidth(140);
-							table.getColumnModel().getColumn(3).setMinWidth(140);
-							table.getColumnModel().getColumn(4).setMinWidth(150);
-							table.getColumnModel().getColumn(5).setMinWidth(110);
-							table.getColumnModel().getColumn(6).setMinWidth(300);
-							table.getColumnModel().getColumn(7).setMinWidth(130);
-							table.getColumnModel().getColumn(8).setMinWidth(170);
-							table.getColumnModel().getColumn(9).setMinWidth(170);
-							table.getColumnModel().getColumn(10).setMinWidth(170);
-							table.getColumnModel().getColumn(11).setMinWidth(150);
-
-							scrollPane_0.setViewportView(table);
-							txt_show += " \nFTP Show to Table...";
-							txtpnna_0.setText(txt_show);
-							txt_show += " \ndone...Number:" + list.length() + " / Failed:" + FtpService.list_failed.length();
-							//錯誤顯示SN
-							for (Object string : FtpService.list_failed) {
-								try {
-									JSONObject one = new JSONObject(string.toString());
-									txt_show += "[" + one.getString("SN") + "]";
-								} catch (Exception e2) {
-									e2.printStackTrace();
-								}
-							}
-							txtpnna_0.setText(txt_show);
-							FLAG_Thead = true;
-
-						}
-					}.start();
-				}
+				search_Log_Table();
 			}
 		});
+
 		btnNewButton_1.setBounds(994, 72, 171, 35);
 		frmDtrPltLog.getContentPane().add(btnNewButton_1);
 
@@ -362,6 +300,83 @@ public class Main {
 		separator_1.setForeground(new Color(160, 160, 160));
 		separator_1.setBounds(0, 354, 1186, 4);
 		frmDtrPltLog.getContentPane().add(separator_1);
+
+	}
+
+	public void search_Log_Table() {
+		String[] columns = { "工單號", "型號", "SN(產品)", "SIZE(Byte)", "BIOS", "IMEI", "EC", "ECN", "M/B序號", "LAN1 MAC", "LAN2 MAC", "WIFI MAC" };
+		if (FLAG_Thead) {
+			FLAG_Thead = false;
+			new Thread() {
+				public void run() {
+					// Step2. 查詢項目
+					String mk_id = textField_0.getText().trim();// 製令單 ID
+					String mk_model = textField_1.getText().trim();// 型號 名稱
+					String mk_sn = textField_2.getText().trim();// SN產品 序號
+					String[] search = { mk_id, mk_model, mk_sn };
+					String txt_show = "說明 : Log to Excel = 輸出Excel/Log to Table = 顯示在Table上 ";
+					txt_show += "\n有任何問題 管理員 請打分機:321 ";
+					txt_show += "\n製令單_ : " + mk_id + " _機種型號_ : " + mk_model + " _SN產品序號_ : " + mk_sn;
+					txtpnna_0.setText(txt_show);
+
+					System.out.println("Step2.製令單_ : " + mk_id + " _機種型號_ : " + mk_model + " _SN產品序號_ : " + mk_sn);
+
+					txt_show += " \nFTP Connect...";
+					txtpnna_0.setText(txt_show);
+
+					// Step3. 執行項目 LOG to JSONArray
+					txt_show += " \nFTP Search LogFile to Table...";
+					txtpnna_0.setText(txt_show);
+					year = Year.now().getValue();
+					JSONArray list = FtpService.downFile(ftpHost, ftpPort, ftpUserName, ftpPassword, ftpPath + year + '/', search, localPath);
+					// System.out.println("Step3.查詢清單_ : " + list.toString());
+
+					txt_show += " \nFTP Create Table...";
+					txtpnna_0.setText(txt_show);
+					// Step4. 執行項目 JSONArray to Object[][]
+					Object[][] data = TableService.createTable(list);
+					if (list.length() > 0) {
+						// Step5. 取代顯示Table
+						table = new JTable(data, columns);
+
+						table.setRowHeight(30);
+						table.setFont(new Font("新宋体", Font.BOLD, 16));
+						table.getTableHeader().setFont(new Font("新宋体", Font.BOLD, 16));
+						table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+						table.getColumnModel().getColumn(0).setMinWidth(140);
+						table.getColumnModel().getColumn(1).setMinWidth(80);
+						table.getColumnModel().getColumn(2).setMinWidth(140);
+						table.getColumnModel().getColumn(3).setMinWidth(140);
+						table.getColumnModel().getColumn(4).setMinWidth(150);
+						table.getColumnModel().getColumn(5).setMinWidth(110);
+						table.getColumnModel().getColumn(6).setMinWidth(300);
+						table.getColumnModel().getColumn(7).setMinWidth(130);
+						table.getColumnModel().getColumn(8).setMinWidth(170);
+						table.getColumnModel().getColumn(9).setMinWidth(170);
+						table.getColumnModel().getColumn(10).setMinWidth(170);
+						table.getColumnModel().getColumn(11).setMinWidth(150);
+
+						scrollPane_0.setViewportView(table);
+						txt_show += " \nFTP Show to Table...";
+						txtpnna_0.setText(txt_show);
+					}
+					txt_show += " \ndone...Number:" + list.length() + " / Failed:" + FtpService.list_failed.length();
+					// 錯誤顯示SN
+					for (Object string : FtpService.list_failed) {
+						try {
+							JSONObject one = new JSONObject(string.toString());
+							txt_show += "[" + one.getString("SN") + "]";
+						} catch (Exception e2) {
+							e2.printStackTrace();
+						}
+					}
+					txtpnna_0.setText(txt_show);
+					FLAG_Thead = true;
+					textField_2.setText("");
+					textField_2.requestFocus();
+				}
+			}.start();
+		}
 
 	}
 }

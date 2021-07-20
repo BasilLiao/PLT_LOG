@@ -73,6 +73,7 @@ public class ExcelService {
 			row.createCell(colNum++).setCellValue(one.getString("WorkOrder"));
 			row.createCell(colNum++).setCellValue(one.getString("WorkModel"));
 			row.createCell(colNum++).setCellValue(one.getString("SN"));
+			row.createCell(colNum++).setCellValue(one.getLong("FileSize"));
 			row.createCell(colNum++).setCellValue(one.getString("BIOS"));
 			row.createCell(colNum++).setCellValue(one.getString("IMEI"));
 			row.createCell(colNum++).setCellValue(one.getString("EC"));
@@ -81,7 +82,6 @@ public class ExcelService {
 			row.createCell(colNum++).setCellValue(one.getString("LAN1 MAC"));
 			row.createCell(colNum++).setCellValue(one.getString("LAN2 MAC"));
 			row.createCell(colNum++).setCellValue(one.getString("WIFI MAC"));
-			row.createCell(colNum++).setCellValue(one.getLong("FileSize"));
 		}
 		return workbook;
 	}
